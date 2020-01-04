@@ -3,5 +3,7 @@ name = "rs_pmm_tools"
 version = "0.1.0"
 authors = ["philipp <descpl@yahoo.de>"]
 edition = "2018"
+license = "MIT/Apache-2.0"
+description = "personal rust utilities"
 
 [dependencies]
