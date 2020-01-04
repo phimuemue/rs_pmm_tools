@@ -34,22 +34,27 @@ mod tests {
         }
         let mut n = 0;
         let b = remember_cond!(if verify!(some_fn(verify!(some_fn(true, 0)), 4)) {
-            n+=1;
+            n += 1;
         } else {
-            n-=1;
+            n -= 1;
             1;
         });
         assert!(b);
         assert_eq!(n, 1);
-        let b = remember_cond!(if false&&!verify!(some_fn(verify!(some_fn(true, 0)), 4)) {
-            n+=1;
-        } else {
-            n-=1;
-        });
+        let b = remember_cond!(
+            if false && !verify!(some_fn(verify!(some_fn(true, 0)), 4)) {
+                n += 1;
+            } else {
+                n -= 1;
+            }
+        );
         assert!(!b);
         assert_eq!(n, 0);
-        let b = remember_cond!(if !!verify!(some_fn(verify!(some_fn(true, 0+if some_fn(false, 3){4} else {3})), 4)) {
-            n+=1;
+        let b = remember_cond!(if !!verify!(some_fn(
+            verify!(some_fn(true, 0 + if some_fn(false, 3) { 4 } else { 3 })),
+            4
+        )) {
+            n += 1;
         });
         assert!(b);
         assert_eq!(n, 1);
