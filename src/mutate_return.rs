@@ -1,4 +1,4 @@
-pub trait TMutateReturn<I, T> : Sized {
+pub trait TMutateReturn<I, T>: Sized {
     type T;
     fn mutate_return(self) -> Self::T;
 }
@@ -31,16 +31,34 @@ impl_mutate_return!(SMutateReturn1, T0,);
 impl_mutate_return!(SMutateReturn2, T0, T1,);
 
 #[macro_export]
-macro_rules! mutate_return{($f: expr) => {
-    TMutateReturn::mutate_return($f).into_fn()
-}}
+macro_rules! mutate_return {
+    ($f: expr) => {
+        TMutateReturn::mutate_return($f).into_fn()
+    };
+}
 
 #[test]
 fn test_mutate_return() {
-    assert_eq!([1usize,2,3].iter().copied().fold(vec![], mutate_return!(Vec::push)), vec![1, 2, 3]);
+    assert_eq!(
+        [1usize, 2, 3]
+            .iter()
+            .copied()
+            .fold(vec![], mutate_return!(Vec::push)),
+        vec![1, 2, 3]
+    );
     assert_eq!(mutate_return!(Vec::push)(vec![], 6), vec![6]);
-    assert_eq!(mutate_return!(|x: &mut usize| {*x = 5;})(7usize), 5);
-    assert_eq!(mutate_return!(|x: &mut usize, a, b| {*x = 5 + if a {2} else {b};})(7usize, true, 3), 7);
+    assert_eq!(
+        mutate_return!(|x: &mut usize| {
+            *x = 5;
+        })(7usize),
+        5
+    );
+    assert_eq!(
+        mutate_return!(|x: &mut usize, a, b| {
+            *x = 5 + if a { 2 } else { b };
+        })(7usize, true, 3),
+        7
+    );
     let mut vecn = Vec::<usize>::new();
     {
         let mut fn_twice = mutate_return!(|n_mut: &mut usize, n_in| {
@@ -51,10 +69,13 @@ fn test_mutate_return() {
         dbg!(fn_twice(19, 9));
     }
     assert_eq!(vecn, vec![3, 9]);
-    fn app1(f: impl FnOnce(usize, usize)->usize) -> usize {
-        dbg!(f(4,3))
+    fn app1(f: impl FnOnce(usize, usize) -> usize) -> usize {
+        dbg!(f(4, 3))
     }
-    assert_eq!(app1(mutate_return!(|x: &mut usize, y| {*x=y;})), 3);
+    assert_eq!(
+        app1(mutate_return!(|x: &mut usize, y| {
+            *x = y;
+        })),
+        3
+    );
 }
-
-
